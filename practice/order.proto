@@ -1,0 +1,16 @@
+edition = "2023";
+
+// this is a protobuf called order with 3 fields: order_id, user, and products
+// products is repeated because one user can order multiple products
+// user is a User because we want to use all of the variables associated with it
+// because we are using the definitions of both proto files, we also import them in this one
+// now order contains all the protobuf messages
+
+import "user.proto";
+import "product.proto";
+
+message Order {
+    int32 order_id = 1;
+    User user = 2;
+    repeated Product products = 3;
+}

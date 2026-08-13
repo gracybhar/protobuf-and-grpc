@@ -1,0 +1,54 @@
+// Protocol Buffers are a language-neutral, platform-neutral extensible mechanism for serializing structured data.
+// Protocol buffer messages and services are described by engineer-authored .proto files.
+
+edition = "2023";
+
+enum Enum {
+  A = 0;
+  B = 1;
+}
+
+message Person {
+  string name = 1; // the 1 is just a field number and not necesarily its value 
+  int32 id = 2;
+  string email = 3;
+  optional Enum enum = 1; 
+  // if the enum is open, it will keep 2 even though there is no 2 field value in Enum 
+        // this is if a future file uses it it keeps it "safe"
+  // if the enum if closed, it will say that it is not set and give the default 0 field value with A 
+        //(C++ default and known problem)
+}
+
+// Wire format reference card: 
+/*
+message    := (tag value)*
+
+tag        := (field << 3) bit-or wire_type;
+                encoded as uint32 varint
+value      := varint      for wire_type == VARINT,
+              i32         for wire_type == I32,
+              i64         for wire_type == I64,
+              len-prefix  for wire_type == LEN,
+              <empty>     for wire_type == SGROUP or EGROUP
+
+varint     := int32 | int64 | uint32 | uint64 | bool | enum | sint32 | sint64;
+                encoded as varints (sintN are ZigZag-encoded first)
+i32        := sfixed32 | fixed32 | float;
+                encoded as 4-byte little-endian (float is IEEE 754
+                single-precision); memcpy of the equivalent C types (u?int32_t,
+                float)
+i64        := sfixed64 | fixed64 | double;
+                encoded as 8-byte little-endian (double is IEEE 754
+                double-precision); memcpy of the equivalent C types (u?int64_t,
+                double)
+
+len-prefix := size (message | string | bytes | packed);
+                size encoded as int32 varint
+string     := valid UTF-8 string (e.g. ASCII);
+                max 2GB of bytes
+bytes      := any sequence of 8-bit bytes;
+                max 2GB of bytes
+packed     := varint* | i32* | i64*,
+                consecutive values of the type specified in `.proto`
+
+*/

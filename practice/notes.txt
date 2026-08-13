@@ -1,0 +1,63 @@
+proto to c++ pipeline: 
+
+User
+ ├── id
+ ├── name
+ └── email
+
+Product
+ ├── id
+ ├── name
+ └── price
+
+Order
+ ├── order_id
+ ├── user_id
+ └── products
+
+ so in our proto files: 
+
+ Order
+ |
+ ├── order_id
+ |
+ ├── User
+ │    ├── id
+ │    ├── name
+ │    └── email
+ |
+ └── Products
+      ├── Product
+      ├── Product
+      └── Product
+
+______________________________________________________________________________
+ this is what happens/how proto and c++ work together: 
+ 
+ .proto
+   ↓ protoc (proto compiler)
+.pb.h + .pb.cc (makes these files that c++ file(s) use to serialize the data)
+   ↓ C++
+   ↓ Serialize (doing this in our c++ file creates a .data file)
+binary file
+   ↓ Deserialize
+C++ objects (deserializing creates the message object)
+
+1) to run all of the proto files: protoc --cpp_out=. user.proto product.proto order.proto
+      this creates the cooresponding .pb.h and .pb.cc files
+2) now we create our c++ program that: 
+      Creates a User
+      Creates Products
+      Creates an Order
+      Serializes the Order to a file
+      Reads the file back
+      Deserializes it
+      Prints everything
+3) compile by making CMakeLists.txt 
+      this uses the .cpp file we made and the .pb.cc files that were generated
+4) then build
+   mkdir build
+   cd build
+   cmake .. 
+   cmake --build .
+5) run program: ./ecommerce
